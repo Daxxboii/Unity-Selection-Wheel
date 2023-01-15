@@ -17,7 +17,7 @@ public class CustomTools : EditorWindow
 
     static int UpdateBy;
 
-    public static float progress = 1;
+    public static float progress = 4;
 
     static float min = 1;
 
@@ -133,8 +133,7 @@ public class CustomTools : EditorWindow
                         GUILayout.Height(20))
                 )
                 {
-                    Config.CallFunction(Config._ButtonConfig[i].index);
-                    Config._ButtonConfig[i].action.Invoke();
+                    DemoFunctions.DemoFunction(i);
                 }
             }
 
@@ -155,7 +154,6 @@ public class CustomTools : EditorWindow
         var rect = new Rect(10, 10, 200, 100);
         GUILayout.BeginArea (rect);
 
-        //  GUILayout.Box(rect);
         GUILayout.BeginVertical("Box");
 
         GUILayout.BeginHorizontal();

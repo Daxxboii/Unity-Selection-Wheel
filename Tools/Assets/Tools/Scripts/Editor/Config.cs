@@ -9,7 +9,7 @@ public class Config : MonoBehaviour
     public struct ButtonConfig{
         public int index;
         public string description;
-        public UnityAction action;
+      //  public UnityAction action;
         //Add action Code
     }
 
@@ -58,7 +58,7 @@ public class Config : MonoBehaviour
                 case 1:
                 config.index = 1;
                 config.description = "One";
-                config.action += DemoFunctions.DemoFunction;
+               // config.action += DemoFunctions.DemoFunction;
                 break;
                
                 default:
@@ -73,15 +73,10 @@ public class Config : MonoBehaviour
     }
 
     public static void Clear(){
+        
         _ButtonConfig.Clear();
-    }
-    public static void CallFunction(int Index)
-    {
-        foreach(ButtonConfig c in _ButtonConfig){
-            if(c.index == Index){
-                //call c index;
-            }
-        }
+
 
     }
+   
 }
