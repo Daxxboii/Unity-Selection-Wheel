@@ -13,9 +13,6 @@ public class CircleButtons : EditorWindow
     static Vector2 MousePos;
 
     static List<Vector2> UpdatedPos = new List<Vector2>();
-
-    static int UpdateBy;
-
     public static int numberOfButtons = 4;
     static Texture2D LogoTex;
     static bool lockPosition;
@@ -24,6 +21,7 @@ public class CircleButtons : EditorWindow
     [InitializeOnLoadMethod]
     private static void Initialize()
     {
+        Config.Init();
         LogoTex = (Texture2D)Resources.Load("Logo") as Texture2D;
         SceneView.duringSceneGui += OnSceneGUI;
         EditorApplication.update += UpdateAnimation;
@@ -87,28 +85,21 @@ public class CircleButtons : EditorWindow
             spawnPos.x -= 50;
             spawnPos.y -= 10;
 
-            //UpdatedPos.Add(spawnPos);
             GUILayout.BeginArea(new Rect(UpdatedPos[i].x,
                     UpdatedPos[i].y,
                     100,
                     100));
 
 
-            Timer += Time.deltaTime;
+            Timer = Time.deltaTime;
 
-            Vector2 newUpdatedPos =
-                Vector2.Lerp(UpdatedPos[i], spawnPos, Time.deltaTime);
+            Vector2 newUpdatedPos = Vector2.Lerp(UpdatedPos[i], spawnPos, Timer);
 
             UpdatedPos[i] = newUpdatedPos;
 
-            // Debug.Log (Timer);
-            if (GUILayout
-                    .Button(i.ToString(),
-                    GUILayout.Width(100),
-                    GUILayout.Height(20))
-            )
+            if (GUILayout.Button(Config.buttonConfigs[i].title,GUILayout.Width(100),GUILayout.Height(20)))
             {
-                //DemoFunctions.DemoFunction(i);
+                Config.buttonConfigs[i].action();
             }
 
 
