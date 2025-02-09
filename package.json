@@ -1,0 +1,14 @@
+{
+"name": "com.daxxboii.selectionwheel",
+"version": "1.0.0",
+"displayName": "Selection Wheel",
+"description": "Selection Wheel add the for user to add custom buttons in the viewport in unity",
+
+"unity": "2018.3",
+"dependencies": {
+    "com.unity.ugui": "1.0.0"
+},
+"keywords": ["attributes", "extensions", "editor tools"],
+"author": { "name" : "Daksh Dhakad",
+   "email" : "dhakaddaksh123@gmail.com" }
+}
