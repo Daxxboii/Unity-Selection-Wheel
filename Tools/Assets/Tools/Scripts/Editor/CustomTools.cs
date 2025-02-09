@@ -6,6 +6,7 @@ using UnityEngine;
 public class CustomTools : EditorWindow
 {
     static bool Draw = false;
+    static bool bypassRepaintAll = true;
 
     static float Timer;
 
@@ -25,19 +26,7 @@ public class CustomTools : EditorWindow
 
     static bool ShowSettings = false;
 
-    [MenuItem("River/Enable Tools")]
-    public static void Enable()
-    {
-        SceneView.duringSceneGui += OnSceneGUI;
-        //       instance = this;
-    }
-
-    [MenuItem("River/Disable Tools")]
-    public static void Disable()
-    {
-        SceneView.duringSceneGui -= OnSceneGUI;
-        //     instance = null;
-    }
+    static Texture2D LogoTex;
 
     [MenuItem("River/Toggle Settings")]
     public static void Settings()
@@ -45,16 +34,30 @@ public class CustomTools : EditorWindow
         ShowSettings = !ShowSettings;
     }
 
+    [InitializeOnLoadMethod]
+    private static void Initialize()
+    {
+        LogoTex = (Texture2D)Resources.Load("Logo") as Texture2D;
+        SceneView.duringSceneGui += OnSceneGUI;
+        EditorApplication.update += UpdateAnimation;
+    }
+
+    private static void UpdateAnimation()
+    {
+        if (bypassRepaintAll)
+        {
+            SceneView.RepaintAll();
+        }
+    }
+
     private static void OnSceneGUI(SceneView view)
     {
-        if (ShowSettings) DrawSettings();
-        Texture2D LogoTex = (Texture2D) Resources.Load("Logo") as Texture2D; //don't put png
+        //Debug.Log("OnSceneGUI");
+
         Event e = Event.current;
-        if (
-            e.type == EventType.KeyDown &&
+        if (e.type == EventType.KeyDown &&
             e.keyCode == KeyCode.C &&
-            !SinglePressed
-        )
+            !SinglePressed)
         {
             Draw = true;
             MousePos = Event.current.mousePosition;
@@ -62,7 +65,6 @@ public class CustomTools : EditorWindow
 
             InitializeButtons();
             SinglePressed = true;
-            // Debug.Log("Mouse is Down");
         }
 
         if (e.type == EventType.KeyUp && e.keyCode == KeyCode.C)
@@ -75,7 +77,7 @@ public class CustomTools : EditorWindow
         }
 
         Handles.BeginGUI();
-        if (Draw) DrawCircle((int) progress, MousePos, 120);
+        if (Draw) DrawCircle((int)progress, MousePos, 120);
 
         if (Draw)
         {
@@ -114,8 +116,6 @@ public class CustomTools : EditorWindow
                     100,
                     100));
 
-            // Debug.Log(mousePosition);
-            //  Debug.Log(Draw);
             if (Draw)
             {
                 Timer += Time.deltaTime;
@@ -145,43 +145,8 @@ public class CustomTools : EditorWindow
     {
         for (int i = 0; i < progress; i++)
         {
-            UpdatedPos.Add (MousePos);
+            UpdatedPos.Add(MousePos);
         }
     }
 
-    public static void DrawSettings()
-    {
-        var rect = new Rect(10, 10, 200, 100);
-        GUILayout.BeginArea (rect);
-
-        GUILayout.BeginVertical("Box");
-
-        GUILayout.BeginHorizontal();
-
-        GUILayout.FlexibleSpace();
-        GUILayout.Label("Settings");
-        GUILayout.FlexibleSpace();
-
-        GUILayout.EndHorizontal();
-
-        progress =
-            GUILayout
-                .HorizontalSlider(progress, min, max, GUILayout.Width(200));
-
-        GUILayout.BeginHorizontal();
-
-        GUILayout.Label(min.ToString());
-        GUILayout.FlexibleSpace();
-        GUILayout.Label(((int) progress).ToString());
-        GUILayout.FlexibleSpace();
-        GUILayout.Label(max.ToString());
-
-        GUILayout.EndHorizontal();
-
-        GUILayout.Label("Number of Buttons");
-
-        GUILayout.EndVertical();
-
-        GUILayout.EndArea();
-    }
 }

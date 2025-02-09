@@ -9,8 +9,6 @@ public class Config : MonoBehaviour
     public struct ButtonConfig{
         public int index;
         public string description;
-      //  public UnityAction action;
-        //Add action Code
     }
 
     public static List<ButtonConfig> _ButtonConfig = new List<ButtonConfig>();
