@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class CustomTools : EditorWindow
+public class CircleButtons : EditorWindow
 {
     static bool Draw = false;
     static bool bypassRepaintAll = true;
@@ -12,27 +12,14 @@ public class CustomTools : EditorWindow
 
     static Vector2 MousePos;
 
-    static bool SinglePressed;
-
     static List<Vector2> UpdatedPos = new List<Vector2>();
 
     static int UpdateBy;
 
-    public static float progress = 4;
-
-    static float min = 1;
-
-    static float max = 8;
-
-    static bool ShowSettings = false;
-
+    public static int numberOfButtons = 4;
     static Texture2D LogoTex;
+    static bool lockPosition;
 
-    [MenuItem("River/Toggle Settings")]
-    public static void Settings()
-    {
-        ShowSettings = !ShowSettings;
-    }
 
     [InitializeOnLoadMethod]
     private static void Initialize()
@@ -52,39 +39,30 @@ public class CustomTools : EditorWindow
 
     private static void OnSceneGUI(SceneView view)
     {
-        //Debug.Log("OnSceneGUI");
-
         Event e = Event.current;
-        if (e.type == EventType.KeyDown &&
-            e.keyCode == KeyCode.C &&
-            !SinglePressed)
+        if (e.keyCode == KeyCode.C)
         {
-            Draw = true;
-            MousePos = Event.current.mousePosition;
-            Config.Initialize();
-
-            InitializeButtons();
-            SinglePressed = true;
-        }
-
-        if (e.type == EventType.KeyUp && e.keyCode == KeyCode.C)
-        {
-            Draw = false;
-            SinglePressed = false;
-            Timer = 0f;
-            UpdatedPos.Clear();
-            Config.Clear();
+            if (e.type == EventType.KeyDown && !lockPosition)
+            {
+                Draw = true;
+                lockPosition = true;
+                MousePos = Event.current.mousePosition;
+                InitializeButtons();
+            }
+            else if (e.type == EventType.KeyUp)
+            {
+                Draw = false;
+                lockPosition = false;
+                Timer = 0f;
+                UpdatedPos.Clear();
+            }
         }
 
         Handles.BeginGUI();
-        if (Draw) DrawCircle((int)progress, MousePos, 120);
-
         if (Draw)
         {
-            GUILayout
-                .BeginArea(new Rect(MousePos.x - 15, MousePos.y - 15, 30, 30),
-                LogoTex);
-
+            DrawCircle((int)numberOfButtons, MousePos, 120);
+            GUILayout.BeginArea(new Rect(MousePos.x - 15, MousePos.y - 15, 30, 30), LogoTex);
             GUILayout.EndArea();
         }
         Handles.EndGUI();
@@ -110,32 +88,29 @@ public class CustomTools : EditorWindow
             spawnPos.y -= 10;
 
             //UpdatedPos.Add(spawnPos);
-            GUILayout
-                .BeginArea(new Rect(UpdatedPos[i].x,
+            GUILayout.BeginArea(new Rect(UpdatedPos[i].x,
                     UpdatedPos[i].y,
                     100,
                     100));
 
-            if (Draw)
+
+            Timer += Time.deltaTime;
+
+            Vector2 newUpdatedPos =
+                Vector2.Lerp(UpdatedPos[i], spawnPos, Time.deltaTime);
+
+            UpdatedPos[i] = newUpdatedPos;
+
+            // Debug.Log (Timer);
+            if (GUILayout
+                    .Button(i.ToString(),
+                    GUILayout.Width(100),
+                    GUILayout.Height(20))
+            )
             {
-                Timer += Time.deltaTime;
-
-                Vector2 newUpdatedPos =
-                    Vector2.Lerp(UpdatedPos[i], spawnPos, Time.deltaTime);
-
-                UpdatedPos[i] = newUpdatedPos;
-
-                // Debug.Log (Timer);
-                if (
-                    GUILayout
-                        .Button(Config._ButtonConfig[i].description,
-                        GUILayout.Width(100),
-                        GUILayout.Height(20))
-                )
-                {
-                    DemoFunctions.DemoFunction(i);
-                }
+                //DemoFunctions.DemoFunction(i);
             }
+
 
             GUILayout.EndArea();
         }
@@ -143,7 +118,7 @@ public class CustomTools : EditorWindow
 
     public static void InitializeButtons()
     {
-        for (int i = 0; i < progress; i++)
+        for (int i = 0; i < numberOfButtons; i++)
         {
             UpdatedPos.Add(MousePos);
         }
